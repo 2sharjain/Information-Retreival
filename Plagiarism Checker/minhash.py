@@ -1,42 +1,32 @@
 import random
 import os
-
-_N = 100
-_HASHES = []
-_PRIME = 4294967311
-
-# CHANGE ALL OF THIS
-
-
-def _generate_random():
-    for _ in range(100):
-        _HASHES.append((random.randrange(0, (2**32)),
-                        random.randrange(0, (2**32))))
-
-
-def _get_hash_vals():
-    if not os.path.exists('hashes'):
-        _generate_random()
-
-        with open('hashes', 'w') as f:
-            for pair in _HASHES:
-                f.writelines('{} {}\n'.format(*pair))
-
-    else:
-        with open('hashes', 'r') as f:
-            lines = f.readlines()
-            for i in range(100):
-                _HASHES.append(list(map(int, lines[i].split())))
-
-
-_get_hash_vals()
-
-# END CHANGE
+import pickle
 
 
 class Minhash:
+    _N = 100
+    _PRIME = 4294967311
+
+    @staticmethod
+    def _get_hash_vals():
+        if not os.path.exists('hashes.pkl'):
+            hashes = []
+            for _ in range(100):
+                hashes.append((random.randrange(0, (2**32)),
+                               random.randrange(0, (2**32))))
+
+            with open('hashes.pkl', 'wb') as f:
+                pickle.dump(hashes, f)
+        else:
+            with open('hashes.pkl', 'rb') as f:
+                hashes = pickle.load(f)
+
+        return hashes
+
+    _HASHES = _get_hash_vals.__func__()
+
     def __init__(self, input_vector):
-        self.__vector = [float('inf')] * _N
+        self.__vector = [float('inf')] * self._N
         self._minhash(input_vector)
 
     def __getitem__(self, given):
@@ -52,9 +42,9 @@ class Minhash:
         for element in input_vector:
             assert (isinstance(element, int))
 
-            for i, weights in enumerate(_HASHES):
+            for i, weights in enumerate(self._HASHES):
                 a, b = weights
-                output = (a * element + b) % _PRIME
+                output = (a * element + b) % self._PRIME
 
                 self.__vector[i] = min(self.__vector[i], output)
 
@@ -62,8 +52,8 @@ class Minhash:
         assert (isinstance(other, Minhash))
 
         similarity = 0
-        for i in range(_N):
+        for i in range(self._N):
             similarity += 1 if self[i] == other[i] else 0
 
-        similarity = round(similarity / _N, 3)
+        similarity = round(similarity / self._N, 3)
         return similarity
