@@ -1,0 +1,1 @@
+{ "LSH_FILE": "path/to/lsh", "MINHASH_FILE": "path/to/minhash", "CORPUS_DIR": "corpus/dir" }
