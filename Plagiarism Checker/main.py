@@ -1,5 +1,6 @@
 import json
 import os
+import argparse
 
 from preprocess import vectorize_file
 from minhash import Minhash
@@ -40,6 +41,18 @@ class Handler:
 if __name__ == '__main__':
     handler = Handler()
 
-    res = handler.query(input("enter\n"))
-    for r in res:
-        print(r[0], r[1])
+    parser = argparse.ArgumentParser(description="Plagiarism Checker")
+    parser.add_argument(
+        "--file_name", help="Relative path to the file which you want to check", type=str)
+    parser.add_argument(
+        '--build', help='Build the LSH and minhash from scratch', action="store_true")
+
+    args = parser.parse_args()
+
+    if args.build:
+        handler.index.build_index()
+    elif args.file_name:
+        results = handler.query(args.file_name)
+
+        for item in results:
+            print("{} {}".format(*item))
