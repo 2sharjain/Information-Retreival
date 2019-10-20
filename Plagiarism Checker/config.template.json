@@ -1,1 +1,6 @@
-{ "LSH_FILE": "path/to/lsh", "MINHASH_FILE": "path/to/minhash", "CORPUS_DIR": "corpus/dir" }
+{
+	"LSH_FILE": "path/to/lsh",
+	"MINHASH_FILE": "path/to/minhash",
+	"CORPUS_DIR": "corpus/dir",
+	"TFIDF_FILE": "/path/to/idf"
+}
