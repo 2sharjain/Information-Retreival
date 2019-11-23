@@ -9,3 +9,5 @@ config.json
 # index
 *.pkl
 
+# pycco docs
+docs

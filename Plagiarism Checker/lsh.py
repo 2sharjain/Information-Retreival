@@ -2,6 +2,9 @@ from zlib import crc32
 
 
 class Hashtable:
+    '''
+        Class representing a hashtable which hashes docs to a bucket.
+    '''
     buckets = 100
 
     def __init__(self):
@@ -22,6 +25,11 @@ class Hashtable:
 
 
 class LSH:
+    '''
+        Builds the LSH from the given minhashes. Also Finds the elements in the same bucket for 
+        a given minhash vector.
+    '''
+
     def __init__(self, minhash_index=None, table=None):
         self.index = {}
 
@@ -37,7 +45,10 @@ class LSH:
                 print(bucket)
 
     def process(self, minhash_index):
-        band_size = 5
+        '''
+            Hashes elements in different bands to buckets.
+        '''
+        band_size = 4
         pos = 0
         dim = 100
 
@@ -60,7 +71,7 @@ class LSH:
         result = []
         pos = 0
         dim = 100
-        band_size = 5
+        band_size = 4
 
         while pos < dim // band_size:
             band = "".join(

@@ -4,11 +4,18 @@ import pickle
 
 
 class Minhash:
+    '''
+        Represents a Minhash vector. Creates a minhash vector from a given vector.
+        Also used to find similar vectors using jaccard metric.
+    '''
     _N = 100
     _PRIME = 4294967311
 
     @staticmethod
     def _get_hash_vals():
+        '''
+            Generates 100 random hash function weights.
+        '''
         if not os.path.exists('hashes.pkl'):
             hashes = []
             for _ in range(100):
@@ -39,6 +46,9 @@ class Minhash:
         return len(self.__vector)
 
     def _minhash(self, input_vector):
+        '''
+            Creates minhash from the given vector and the 100 hash functions.
+        '''
         for element in input_vector:
             assert (isinstance(element, int))
 
@@ -49,6 +59,9 @@ class Minhash:
                 self.__vector[i] = min(self.__vector[i], output)
 
     def compare(self, other):
+        '''
+            Returns jaccard score for two vectors
+        '''
         assert (isinstance(other, Minhash))
 
         similarity = 0

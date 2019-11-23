@@ -9,6 +9,10 @@ from lsh import LSH
 
 
 class Handler:
+    '''
+        Handles IO. Includes Querying and building index.
+    '''
+
     def __init__(self):
         self.config = self.get_config()
         self.index = Index(self.config)
@@ -22,6 +26,9 @@ class Handler:
             return self.query_using_idf(text) if use_idf else self.query_using_lsh(text)
 
     def query_using_idf(self, text):
+        '''
+            Converts the text to a vector and finds cosine with other vectors.
+        '''
         self.idf = self.index.idf
         vector = self.idf.to_vector(process_doc(text))
         docs = list(self.idf.vectors.keys())
@@ -36,6 +43,10 @@ class Handler:
         return res
 
     def query_using_lsh(self, text):
+        '''
+            Creates minhash vector from given text. Finds similar elements using LSH and 
+            then calculates jaccard for ranking these documents.
+        '''
         self.lsh = self.index.lsh
         self.minhashes = self.index.minhashes
 
@@ -50,7 +61,7 @@ class Handler:
         res.sort(key=lambda doc: minhash.compare(
             self.minhashes[doc]), reverse=True)
 
-        return [(doc, minhash.compare(self.minhashes[doc]) * 100) for doc in res]
+        return [(doc, int(minhash.compare(self.minhashes[doc]) * 100)) for doc in res][:10]
 
     def get_config(self):
         with open('config.json', 'r') as f:

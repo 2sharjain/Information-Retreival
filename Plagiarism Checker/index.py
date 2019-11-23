@@ -7,6 +7,13 @@ from inverted import TFIDF
 
 
 class Index:
+    '''
+        This class handles all the indices created which are TF-IDF and LSH.
+
+        Takes in a config dictionary and loads or creates the index if the files
+        are already present and if not present respectively
+    '''
+
     def __init__(self, config: dict):
         self.MINHASH_FILE = config.get('MINHASH_FILE', None)
         self.LSH_FILE = config.get('LSH_FILE', None)
@@ -21,11 +28,17 @@ class Index:
             self.load_tfidf()
 
     def _build_lsh(self, minhashes):
+        '''
+            Builds the LSH using the given minhash vectors
+        '''
         self.lsh = LSH(minhashes)
         with open(self.LSH_FILE, 'wb') as f:
             pickle.dump(self.lsh.hash_tables, f)
 
     def build_index(self):
+        '''
+            Builds the indices. 
+        '''
         self.minhashes = {}
         docs = self.get_docs()
 
@@ -47,7 +60,9 @@ class Index:
         self.build_idf(docs)
 
     def build_idf(self, docs):
-
+        '''
+            Builds the TF-IDF index for the given corpus
+        '''
         processed = {}
         for doc in docs:
             processed[doc] = process_doc(docs[doc])
@@ -60,6 +75,10 @@ class Index:
         print("built tfidf successfully")
 
     def get_docs(self):
+        '''
+            Opens and reads all the files in the CORPUS_DIR and 
+            returns the dict of {file_name:text} for all files.
+        '''
         docs = {}
         for file_name in os.listdir(self.CORPUS_DIR):
             file_name = os.path.join(self.CORPUS_DIR, file_name)
@@ -77,14 +96,24 @@ class Index:
         return docs
 
     def load_minhash(self):
+        '''
+            Loads the Minhash vectors from the file.
+        '''
         with open(self.MINHASH_FILE, 'rb') as f:
             self.minhashes = pickle.load(f)
 
     def load_lsh(self):
+        '''
+            Loads the buckets from the files and initalizes a LSH object using this 
+            data.
+        '''
         with open(self.LSH_FILE, 'rb') as f:
             data = pickle.load(f)
             self.lsh = LSH(table=data)
 
     def load_tfidf(self):
+        '''
+            Loads the TF-IDF object from the file.
+        '''
         with open(self.TFIDF_FILE, 'rb') as f:
             self.idf = pickle.load(f)
