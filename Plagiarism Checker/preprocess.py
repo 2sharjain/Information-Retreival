@@ -10,6 +10,9 @@ _regex = re.compile(r'[^\w\s]')
 
 
 def vectorize_file(file_name):
+    '''
+        Creates a vector from hashing the shingles from the file
+    '''
     try:
         with open(file_name, 'r') as f:
             text = f.read()
@@ -19,6 +22,12 @@ def vectorize_file(file_name):
 
 
 def process_doc(doc):
+    '''
+        Process the doc according to the following pipeline. Returns a dict of 
+        words and their frequency in the doc.
+
+        Tokenization -> Removal of Stop words -> Stemming.
+    '''
     words = word_tokenize(doc)
     stop_words = set(stopwords.words('english'))
     filtered = [w for w in words if w not in stop_words]
@@ -34,6 +43,9 @@ def process_doc(doc):
 
 
 def vectorize(text):
+    '''
+        Creates a vector of 32bit ints from the shingles of the text.
+    '''
     text = text.lower()
     text = _clean(text)
 
@@ -46,8 +58,14 @@ def vectorize(text):
 
 
 def _clean(text):
+    '''
+        Removes punctuations, whitespaces etc from the text.
+    '''
     return _regex.sub("", text)
 
 
 def _hash(text):
+    '''
+        Hashes the string to a 32 bit int.
+    '''
     return crc32(bytes(text, 'utf-8'))
